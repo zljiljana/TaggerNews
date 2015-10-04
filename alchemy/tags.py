@@ -82,6 +82,10 @@ def importModel():
 	global model
 	model = gensim.models.Word2Vec.load_word2vec_format(path, binary=True)
 	print "Word2Vec loaded."
+	test_url = "https://en.wikipedia.org/wiki/Main_Page"
+	if (getKeywords(test_url) == 'limit-exceeded'):
+		return False
+	return True
 
 def getKeywords(url):
 	# call alchemyAPI keyword extractor
