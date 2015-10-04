@@ -12,3 +12,7 @@ def render_filter():
     userTag = request.args.get('ID')
     filter_snippet = filter(userTag)
     return render_template("output.html", snippet = filter_snippet)
+
+@app.route('/slides')
+def render_slides():
+    return render_template("slides.html")
