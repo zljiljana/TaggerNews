@@ -1,0 +1,9 @@
+app/*.pyc
+alchemy/*.pyc
+.DS_Store
+app/.DS_Store
+alchemy/.DS_Store
+app/templates/.Rhistory
+api_key.txt
+app/api_key.txt
+api_keys.txt
