@@ -8,11 +8,9 @@ connection = r.connect(host=RDB_HOST, port=RDB_PORT)
 
 # Define a function that will return an HTML snippet.
 def filter(userTag):
-    print userTag
-    # need to get the 
     res = ""
     try:
-        myDict = list(r.db("test").table("tag_dict").pluck(userTag).run(connection))[0][userTag]
+        myDict = list(r.db("tagger_db").table("tag2html").pluck(userTag).run(connection))[0][userTag]
         if (myDict): # if it exists
             # join the elements in a list 
             res = ' '.join(myDict)

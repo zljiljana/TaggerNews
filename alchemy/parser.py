@@ -29,7 +29,7 @@ def openHtml(response):
 	f.write(add)
 	add = "<link href=\"../static/css/news.css\" rel=\"stylesheet\"><script type=\"text/javascript\">function hide(id) {var el = document.getElementById(id); if (el) { el.style.visibility = 'hidden'; }} function vote(node) {var v = node.id.split(/_/);var item = v[1];hide('up_'   + item);hide('down_' + item);var ping = new Image();ping.src = node.href;return false;}"
 	f.write(add)
-	add = "</script><title>Tagger News</title></head><body><center><table id=\"hnmain\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"85%\" bgcolor=\"#f6f6ef\"><tr><td bgcolor=\"#ff6600\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"padding:2px\"><tr><td style=\"width:18px;padding-right:4px\"><a href=\"http://www.ycombinator.com\"><img src=\"../static/y18.gif\" width=\"18\" height=\"18\" style=\"border:1px #ffffff solid;\"></a></td><td style=\"line-height:12pt; height:10px;\"><span class=\"pagetop\"><b><a href=\"/input\">Tagger News</a></b><img src=\"../static/s.gif\" height=\"1\" width=\"10\"><a href=\"https://github.com/zljiljana/TaggerNews\">github</a> | <a href=\"https://github.com/zljiljana/TaggerNews\">slides</a></span></td><td style=\"text-align:right;padding-right:4px;\"><span class=\"pagetop\"><a href=\"mailto:zigicljiljana@gmail.com\">zigicljiljana@gmail.com</a></span></td>"
+	add = "</script><title>Tagger News</title></head><body><center><table id=\"hnmain\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"85%\" bgcolor=\"#f6f6ef\"><tr><td bgcolor=\"#ff6600\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"padding:2px\"><tr><td style=\"width:18px;padding-right:4px\"><a href=\"http://www.ycombinator.com\"><img src=\"../static/y18.gif\" width=\"18\" height=\"18\" style=\"border:1px #ffffff solid;\"></a></td><td style=\"line-height:12pt; height:10px;\"><span class=\"pagetop\"><b><a href=\"/input\">Tagger News</a></b><img src=\"../static/s.gif\" height=\"1\" width=\"10\"><a href=\"https://github.com/zljiljana/TaggerNews\">github</a> | <a href=\"/slides\">slides</a></span></td><td style=\"text-align:right;padding-right:4px;\"><span class=\"pagetop\"><a href=\"mailto:zigicljiljana@gmail.com\">zigicljiljana@gmail.com</a></span></td>"
 	f.write(add)
 	add = "</tr></table> <tr style=\"height:10px\"></tr><tr style=\"height:10px\"></tr><tr><td>"
 	f.write(add)
@@ -66,16 +66,16 @@ def parse():
 	f.close() 
 	print "Main page tags set."
 	# check if 300-popular dictionary already has the data
-	if (r.db('test').table('tag_dict').count().run(connection) == 0):
+	if (r.db('tagger_db').table('tag2html').count().run(connection) == 0):
 		setDictionary()
 	print "Dictionary ready."
 
 
 def getTags(itemid):
-	res = list(r.db("test").table("itemid_dict").filter({'id': itemid}).run(connection))
+	res = list(r.db("tagger_db").table("id2html").filter({'id': itemid}).run(connection))
 	if res==[]:
 		(to_insert, tags) = selectTags(itemid)
-		r.db("test").table("itemid_dict").insert({ "id": itemid, "tag_string": to_insert}).run(connection)
+		r.db("tagger_db").table("id2html").insert({ "id": itemid, "tag_string": to_insert}).run(connection)
 		return to_insert
 	else:
 		# data is in the rethinkDB
@@ -161,7 +161,7 @@ def setDictionary():
 				url = data['url']
 				(to_insert, tags) = selectTags(itemid)
 				# store to temp db
-				r.db("test").table("itemid_dict").insert({"id": itemid, "tag_string": to_insert}).run(connection)
+				r.db("tagger_db").table("id2html").insert({"id": itemid, "tag_string": to_insert}).run(connection)
 				if len(tags) > 1:
 					title = data['title']
 					score = str(data['score'])
@@ -174,4 +174,4 @@ def setDictionary():
 		except KeyError:
 			pass
 	# r.db("test").table("tag_dict").delete().run(connection)
-	r.db("test").table("tag_dict").insert(dict).run(connection)
+	r.db("tagger_db").table("tag2html").insert(dict).run(connection)
