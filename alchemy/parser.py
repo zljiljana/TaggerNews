@@ -29,7 +29,7 @@ def openHtml(response):
 	f.write(add)
 	add = "<link href=\"../static/css/news.css\" rel=\"stylesheet\"><script type=\"text/javascript\">function hide(id) {var el = document.getElementById(id); if (el) { el.style.visibility = 'hidden'; }} function vote(node) {var v = node.id.split(/_/);var item = v[1];hide('up_'   + item);hide('down_' + item);var ping = new Image();ping.src = node.href;return false;}"
 	f.write(add)
-	add = "</script><title>Tagger News</title></head><body><center><table id=\"hnmain\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"85%\" bgcolor=\"#f6f6ef\"><tr><td bgcolor=\"#ff6600\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"padding:2px\"><tr><td style=\"width:18px;padding-right:4px\"><a href=\"http://www.ycombinator.com\"><img src=\"../static/y18.gif\" width=\"18\" height=\"18\" style=\"border:1px #ffffff solid;\"></a></td><td style=\"line-height:12pt; height:10px;\"><span class=\"pagetop\"><b><a href=\"#\">Tagger News</a></b><img src=\"../static/s.gif\" height=\"1\" width=\"10\"><a href=\"https://github.com/zljiljana/TaggerNews\">github</a> | <a href=\"https://github.com/zljiljana/TaggerNews\">slides</a></span></td><td style=\"text-align:right;padding-right:4px;\"><span class=\"pagetop\"><a href=\"mailto:zigicljiljana@gmail.com\">zigicljiljana@gmail.com</a></span></td>"
+	add = "</script><title>Tagger News</title></head><body><center><table id=\"hnmain\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"85%\" bgcolor=\"#f6f6ef\"><tr><td bgcolor=\"#ff6600\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"padding:2px\"><tr><td style=\"width:18px;padding-right:4px\"><a href=\"http://www.ycombinator.com\"><img src=\"../static/y18.gif\" width=\"18\" height=\"18\" style=\"border:1px #ffffff solid;\"></a></td><td style=\"line-height:12pt; height:10px;\"><span class=\"pagetop\"><b><a href=\"/input\">Tagger News</a></b><img src=\"../static/s.gif\" height=\"1\" width=\"10\"><a href=\"https://github.com/zljiljana/TaggerNews\">github</a> | <a href=\"https://github.com/zljiljana/TaggerNews\">slides</a></span></td><td style=\"text-align:right;padding-right:4px;\"><span class=\"pagetop\"><a href=\"mailto:zigicljiljana@gmail.com\">zigicljiljana@gmail.com</a></span></td>"
 	f.write(add)
 	add = "</tr></table> <tr style=\"height:10px\"></tr><tr style=\"height:10px\"></tr><tr><td>"
 	f.write(add)
@@ -39,9 +39,6 @@ def openHtml(response):
 
 def parse():
 	response = getPageInfo()
-
-	# here every time you get the article, take its itemid and check if tags are in the rethinkDB, if yes - get them. If not - calculate them.
-
 	f = openHtml(response)
 	i = 0
 	while (i<23):
@@ -52,19 +49,14 @@ def parse():
 		p = response.readline()
 		itemid = getItemID(p)
 		if (itemid != 0):
-			try:
-				data = firebase.get('/v0/item/' + str(itemid), None)
-				realURL = data['url']
-			except KeyError:
-				realURL = data['type']
-				pass
+			# check if the itemID is in the rethinkDB, if it is then return the to_insert string
+			to_insert = getTags(itemid)
 		index = p.rfind("<span class=\"deadmark\"></span>")
 		if index != -1:
 			if p.find("sitebit comhead") != -1:
 				index += p[index:].rfind("</a>")+5+7 # add offset
 			else:
 				index += p[index:].rfind("</a>")+4
-			(to_insert, tags) = selectTags(realURL)
 			if (itemid == 0):
 				to_insert = "<td><div class=\"boxed\">url-error</div></td>"
 			p_tmp = p[:index] + to_insert + p[index:]
@@ -74,8 +66,22 @@ def parse():
 	f.close() 
 	print "Main page tags set."
 	# check if 300-popular dictionary already has the data
-	setDictionary()
+	if (r.db('test').table('tag_dict').count().run(connection) == 0):
+		setDictionary()
 	print "Dictionary ready."
+
+
+def getTags(itemid):
+	res = list(r.db("test").table("itemid_dict").filter({'id': itemid}).run(connection))
+	if res==[]:
+		(to_insert, tags) = selectTags(itemid)
+		r.db("test").table("itemid_dict").insert({ "id": itemid, "tag_string": to_insert}).run(connection)
+		return to_insert
+	else:
+		# data is in the rethinkDB
+		to_insert = res[0]['tag_string']
+		return str(to_insert)
+
 
 
 def getItemID(html_row):
@@ -88,11 +94,23 @@ def getItemID(html_row):
 	return itemid
 
 
-def selectTags(url):
-	if url == ('job' or 'pollopt' or 'poll' or 'comment'):
-		to_insert = "<td><div class=\"boxed\">" + url +"</div></td>"
-		tagses = url
-		return (to_insert, tagses)
+def selectTags(itemid):
+	try:
+		data = firebase.get('/v0/item/' + str(itemid), None)
+		url = data['url']
+	except KeyError:
+		url = data['type']
+		if url == ('job' or 'pollopt' or 'poll' or 'comment'):
+			to_insert = "<td><div class=\"boxed\">" + url +"</div></td>"
+			tagses = [url]
+			return (to_insert, tagses)
+		else:
+			to_insert = "<td><div class=\"boxed\">url-error</div></td>"
+			tagses = ['url-error']
+			return (to_insert, tagses)
+
+
+
 	topKW = tags.getKeywords(url)
 	if len(topKW) > 2:
 		t = tags.getTags(topKW)
@@ -141,19 +159,19 @@ def setDictionary():
 			if (data['type'] == 'story'):
 				# get tags
 				url = data['url']
-				(to_insert, tags) = selectTags(url)
+				(to_insert, tags) = selectTags(itemid)
+				# store to temp db
+				r.db("test").table("itemid_dict").insert({"id": itemid, "tag_string": to_insert}).run(connection)
 				if len(tags) > 1:
 					title = data['title']
 					score = str(data['score'])
 					usr = data['by']
 					comments = str(data['descendants'])
-					# filtered = filter(lambda x: x in string.printable, to_insert)
-					#print "filtered: ", filtered
 					myString = "<tr class='athing'><td align=\"right\" valign=\"top\" class=\"title\"><span class=\"rank\"> </span></td><td><center><a id=\"up_10287983\"><div class=\"votearrow\" title=\"upvote\"></div></a></center></td><td class=\"title\"><span class=\"deadmark\"></span><a href=\"" + url + "\">" + title + "</a>" + to_insert + "</td><td><center><a id=\"up_10287983\"><div class=\"votearrow\" title=\"upvote\"></div></a></center></td></tr><tr><td colspan=\"2\"></td><td class=\"subtext\"><span class=\"score\">" + score + " points</span> by <a>" + usr + "</a> | <a>" + comments +" comments</a></td></tr><tr class=\"spacer\" style=\"height:5px\"></tr>"
 					print "tags: ", tags[0], tags[1]
 					add(tags[0], myString, dict)
 					add(tags[1], myString, dict)
 		except KeyError:
 			pass
-	r.db("test").table("tag_dict").delete().run(connection)
+	# r.db("test").table("tag_dict").delete().run(connection)
 	r.db("test").table("tag_dict").insert(dict).run(connection)
