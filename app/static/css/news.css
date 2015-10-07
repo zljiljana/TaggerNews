@@ -80,7 +80,7 @@ pre:hover {overflow:auto}
 .btn-default{color:#333;background-color:#fff;border-color:#ccc}
 .btn-lg{padding:2px 16px;font-size:12px;line-height:1.3333333;border-radius:6px}
 .container{padding-right:15px;padding-left:20px;margin-right:auto;margin-left:auto; font-size:14px;}
-.form-group{margin-bottom:10px;font-size:14px;}
+.form-group{margin-bottom:10px;font-size:14px;color:#000000}
 
 .tokenize-sample { width: 300px }
 
