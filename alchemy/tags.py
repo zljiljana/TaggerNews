@@ -9,7 +9,7 @@ topLvlTags = ['media','people','business','biology','sport','education','archite
 	'film', 'performance', 'computer hardware','music','computer software', 'digicatal_camera','engineering','fashion','physics', 'animals', 'fiction', 'literature',
 	'gadgets', 'history','robotics', 'invention', 'automotive','hobby'] # list of top level tags
 
-tagMap = {'media': ['e_commerce','brand','status','royalty','publication','review','author','writer','actor','album','artist','genre','instrument','festival', 'marriage','friendship','romantic_relationship','rehab','rivalry'],
+tagMap = {'media': ['e_commerce','brand','status','royalty','publication','review','author','writer','actor','album','artist','genre','instrument','festival', 'marriage','friendship','romantic_relationship','rehab'],
 	'business': ['work balance','executive_commitee','culture','us_economy','interview','scandal','privacy','insurance','security', 
 		'apple','amazon', 'facebook', 'netflix','twitter','venture capital','asset', 'currency', 'stock_exchange', 'investment', 'sponsorship', 'shareholder', 'organization', 'non_profit_organization', 'acquisition', 'leadership', 'startup', 'founder'],
 	'biology': ['protein','chromosome','animal_breed','gene','amino_acid'],
@@ -20,7 +20,7 @@ tagMap = {'media': ['e_commerce','brand','status','royalty','publication','revie
 	'government': ['minister','legislature','president','agency','election','campaign', 'citizenship'],
 	'medicine': ['virus','infection','cancer','brain','nerve','symptom','drug','physician','drug brand', 'hospital', 'disease'], 
 	'gaming': ['entertainment','videogame','mobile','games','game series','game version'],
-	'geography': ['continent', 'country', 'region','mountain','waterfall','glacier','river','lake','island'],
+	'geography': ['continent', 'country','mountain','waterfall','glacier','river','lake','island'],
 	'astronomy': ['cosmology','star','constellation','planet','asteroid','meteor_shower','galaxy','comet'],
 	'military':['armed force','conflict','casualties','war'],
 	'aviation':['airline','airport','plane crash','space','rocket','rocket_fuel','space_agency','satellite','spacecraft'],
@@ -36,14 +36,14 @@ tagMap = {'media': ['e_commerce','brand','status','royalty','publication','revie
 		'statistical_data','statistical_methods','mathematical_model','cloud_computing','python', 'c', 
 		'deep learning','language_processing','cloudera','aws','kafka','random forest','scala', 'plugin','spark', 'hadoop','sql', 'stack overflow', 'text editor','latex', 'lisp',
 		'software architecture','compilers','syntax','website','blog','internet_provider','internet_protocol','api','computer_servers','internet_traffic','social_network',
-		'file_sharing', 'copyrights', ],
+		'file_sharing', 'copyrights'],
 	'chemistry':['chemical_compound','molecule'],
 	'law':['protocol','patent','legal case','court','judge', 'law_enforcement'],
 	'religion':['belief','religious leader','religious organization'],
 	'automotive':['environment','fuel','car body','car company','car designer','car model','transmission', 'car engine','emissions','driving','biking' ,'healthy_life'],
 	'hobby':['collector','collection'],
 	'digital_camera':['camera format','camera resolution', 'image_processing'],
-	'engineering':['bioengineering','bioinformatics', 'nanotechnology','neuroscience','aerospace_engineering','energy','power plants','oil','engineering_firm','civil_engineer', 'mechanical_engineer', 'chemical_engineer', 'battery','engine'],
+	'engineering':['machine_learning','bioengineering','bioinformatics', 'nanotechnology','neuroscience','aerospace_engineering','energy','power plants','oil','engineering_firm','civil_engineer', 'mechanical_engineer', 'chemical_engineer', 'battery','engine'],
 	'fashion':['garment','home decor'],
 	'physics':['calculus','scientific method','dynamics','quantum_theory','optimization', 'theoretical_physics','quark', 'particle','measurement unit']}
 
