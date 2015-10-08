@@ -52,7 +52,10 @@ tagMap = {'media': ['e_commerce','brand','status','royalty','publication','revie
 
 def __init__(self):
 	# Open the key file and read the key
-	f = open("api_key.txt", "r")
+	dir = os.path.dirname(__file__)
+	path = os.path.join(dir, 'api_key.txt')
+	print path
+	f = open(path, "r")
 	key = f.read().strip()
 	print key
 
