@@ -37,7 +37,7 @@ def openHtml(response):
 	f.write(add)
 	add = "</tr></table> <tr style=\"height:10px\"></tr><tr style=\"height:10px\"></tr><tr><td>"
 	f.write(add)
-	add = "<div class=\"container\"><div class = \"container\"><form  action=\"/filter\" method=\"GET\"><div class=\"form-group\"><label for=\"tags\">Input tag: </label><input type=\"text\" id=\"tags\" name='ID' placeholder=\"e.g. data science\"><button type=\"submit\" class=\"btn btn-default btn-lg\">Filter!</button></div></form></div></div>"
+	add = "<div class=\"container\"><div class = \"container\"><form  action=\"/filter\" method=\"GET\"><div class=\"form-group\"><label for=\"tags\">Filter by: </label><input type=\"text\" id=\"tags\" name='ID' placeholder=\"e.g. data science\"><button type=\"submit\" class=\"btn btn-default btn-lg\">Go!</button></div></form></div></div>"
 	f.write(add)
 	return f
 
